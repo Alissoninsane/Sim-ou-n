@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sim ou Não</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+        .container {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+        .question-box {
+            background-color: #003366; /* Azul escuro */
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .question-box p {
+            color: white; /* Cor do texto para melhor legibilidade */
+            font-size: 20px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        button {
+            background-color: lime; /* Verde limão */
+            border: none;
+            color: black;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 0 10px;
+            position: absolute;
+        }
+        /* Animação de chuva de letras */
+        .matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .matrix-letter {
+            position: absolute;
+            top: 0;
+            color: lime;
+            font-size: 14px;
+            font-family: monospace;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(100vh); }
+        }
+        @keyframes shake {
+            0% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(-10px); }
+        }
+        .shake {
+            animation: shake 0.2s;
+        }
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: lime;
+            font-size: 14px;
+            z-index: 2;
+        }
+        #message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: lime;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 3;
+            display: none;
+        }
+        /* Caixa de mensagem extra */
+        .extra-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #003366; /* Azul escuro */
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 3;
+            display: none;
+        }
+        .extra-message p {
+            margin: 0;
+            font-size: 18px;
+        }
+        .info-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ffcc00; /* Amarelo */
+            border: none;
+            color: black;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .arrow {
+            position: fixed;
+            bottom: 80px;
+            right: 80px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 20px solid #ffcc00; /* Amarelo */
+            transform: rotate(45deg);
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Chuva de letras no fundo -->
+    <div class="matrix" id="matrix"></div>
+    
+    <div class="container">
+        <div class="question-box">
+            <p>Você quer transar comigo?</p>
+        </div>
+        <div class="buttons">
+            <button id="yes" onclick="playSound('success')">Sim</button>
+            <button id="no" onclick="moveNo()">Não</button>
+        </div>
+    </div>
+
+    <div class="footer">Feito por Alisson</div>
+    <div id="message">TE AMO VIDA! 🥰</div>
+
+    <div class="extra-message" id="extra-message">
+        <p>Feito pela pessoa que te ama muito, Sabrina! Mesmo estando longe, meu coração está sempre com você. 💖</p>
+    </div>
+    <button class="info-button" onclick="toggleExtraMessage()">❓</button>
+    
+    <!-- Seta apontando para a bolinha de informação -->
+    <div class="arrow"></div>
+
+    <audio id="error-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+    <audio id="success-sound" src="https://www.soundjay.com/button/sounds/button-09.mp3"></audio>
+
+    <script>
+        function playSound(type) {
+            var sound = document.getElementById(type + '-sound');
+            if (sound) {
+                sound.play();
+            }
+            if (type === 'success') {
+                showMessage();
+            }
+        }
+
+        function showMessage() {
+            var message = document.getElementById('message');
+            message.style.display = 'block';
+        }
+
+        function moveNo() {
+            var noButton = document.getElementById('no');
+            noButton.classList.add('shake');
+            setTimeout(() => noButton.classList.remove('shake'), 200);
+
+            var screenWidth = window.innerWidth;
+            var screenHeight = window.innerHeight;
+            var buttonWidth = noButton.offsetWidth;
+            var buttonHeight = noButton.offsetHeight;
+
+            var x = Math.random() * (screenWidth - buttonWidth);
+            var y = Math.random() * (screenHeight - buttonHeight);
+
+            // Aplica a nova posição
+            noButton.style.position = 'fixed'; // Altera para fixed para garantir que fique visível na tela
+            noButton.style.left = `${x}px`;
+            noButton.style.top = `${y}px`;
+
+            // Esconde a mensagem quando "Não" é clicado
+            var message = document.getElementById('message');
+            if (message) {
+                message.style.display = 'none';
+            }
+
+            // Toca o som de erro
+            playSound('error');
+        }
+
+        function toggleExtraMessage() {
+            var extraMessage = document.getElementById('extra-message');
+            if (extraMessage.style.display === 'none' || extraMessage.style.display === '') {
+                extraMessage.style.display = 'block';
+            } else {
+                extraMessage.style.display = 'none';
+            }
+        }
+
+        // Gera a chuva de letras
+        function createMatrix() {
+            const matrix = document.getElementById('matrix');
+            const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            const letterCount = 100; // Quantidade de letras caindo
+
+            for (let i = 0; i < letterCount; i++) {
+                const letter = document.createElement('div');
+                letter.className = 'matrix-letter';
+                letter.style.left = Math.random() * 100 + 'vw';
+                letter.style.animationDuration = (Math.random() * 3 + 2) + 's'; // Aumenta um pouco a velocidade
+                letter.textContent = letters[Math.floor(Math.random() * letters.length)];
+                matrix.appendChild(letter);
+            }
+        }
+
+        createMatrix();
+    </script>
+</body>
+  </html>
+                                      
